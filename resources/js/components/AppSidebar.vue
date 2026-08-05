@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { LayoutGrid, Presentation, Upload, LogIn } from '@lucide/vue';
+import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -17,26 +18,43 @@ import {
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
+const page = usePage();
+const isAuthenticated = computed(() => !!page.props.auth?.user);
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const mainNavItems = computed((): NavItem[] => {
+    const items: NavItem[] = [
+        {
+            title: 'Presentations',
+            href: '/presentations',
+            icon: Presentation,
+        },
+    ];
+
+    // Add Dashboard and Upload for authenticated users
+    if (isAuthenticated.value) {
+        items.unshift({
+            title: 'Dashboard',
+            href: dashboard(),
+            icon: LayoutGrid,
+        });
+        items.push({
+            title: 'Upload',
+            href: '/admin/presentations/create',
+            icon: Upload,
+        });
+    } else {
+        // Add Login for non-authenticated users
+        items.push({
+            title: 'Login',
+            href: '/login',
+            icon: LogIn,
+        });
+    }
+
+    return items;
+});
+
+const footerNavItems: NavItem[] = [];
 </script>
 
 <template>
@@ -45,7 +63,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link href="/">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRAMATECHA - Pasulat at Pasalitang Komunikasyon</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f9fafb;
+      color: #1e293b;
+      line-height: 1.7;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; }
+
+    /* ── Color Tokens ── */
+    :root {
+      --primary: #1d4ed8;
+      --primary-dark: #1e40af;
+      --accent: #f59e0b;
+      --light-bg: #eff6ff;
+      --border: #e2e8f0;
+      --text-muted: #64748b;
+      --white: #ffffff;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 1.75rem; align-items: center; }
+    .nav-links a {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #374151;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-cta {
+      background: var(--primary);
+      color: var(--white) !important;
+      padding: 0.45rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--primary-dark) !important; }
+
+    /* ── Page Sections ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 60%, #1e3a8a 100%);
+      color: var(--white);
+      text-align: center;
+      padding: 6rem 2rem 5rem;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 99px;
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+      letter-spacing: -1px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 1.15rem;
+      max-width: 620px;
+      margin: 0 auto 2.5rem;
+      opacity: 0.9;
+    }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--white);
+      color: var(--primary);
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: 2px solid rgba(255,255,255,0.6);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: white; }
+
+    /* ── Feature Strip ── */
+    .strip {
+      background: var(--white);
+      padding: 3.5rem 2rem;
+    }
+    .strip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .strip-card {
+      background: var(--light-bg);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+    }
+    .strip-card .icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+    .strip-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--primary); }
+    .strip-card p { font-size: 0.9rem; color: var(--text-muted); }
+
+    /* ── Section Wrapper ── */
+    .section { padding: 5rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .section h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
+    }
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 580px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── Lessons Table ── */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; background: var(--white); }
+    thead tr { background: var(--primary); color: var(--white); }
+    th { padding: 0.9rem 1.25rem; text-align: left; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px; }
+    td { padding: 0.85rem 1.25rem; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f1f5ff; }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-yellow { background: #fef9c3; color: #854d0e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .unit-header td {
+      background: #eff6ff;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+      padding: 0.6rem 1.25rem;
+    }
+
+    /* ── Quotes ── */
+    .quotes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .quote-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--primary);
+    }
+    .quote-card p { font-size: 0.95rem; font-style: italic; color: #374151; margin-bottom: 1rem; }
+    .quote-author { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
+
+    /* ── CTA Banner ── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--accent) 0%, #f97316 100%);
+      border-radius: var(--radius);
+      padding: 3rem 2.5rem;
+      text-align: center;
+      margin: 0 2rem 4rem;
+      max-width: 1060px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-banner h2 { font-size: 1.9rem; font-weight: 800; color: var(--white); margin-bottom: 0.75rem; }
+    .cta-banner p { color: rgba(255,255,255,0.9); margin-bottom: 1.75rem; }
+    .cta-banner-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-dark {
+      background: #1e293b;
+      color: var(--white);
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-dark:hover { background: #0f172a; }
+    .btn-white-outline {
+      background: transparent;
+      color: var(--white);
+      padding: 0.72rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: 2px solid rgba(255,255,255,0.7);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-white-outline:hover { background: rgba(255,255,255,0.15); }
+
+    /* ── About ── */
+    .about-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-bottom: 4rem;
+    }
+    .about-intro-text h2 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+    .about-intro-text p { color: var(--text-muted); margin-bottom: 0.75rem; }
+    .about-visual {
+      background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      color: var(--white);
+      text-align: center;
+    }
+    .about-visual .big-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .about-visual h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .about-visual p { font-size: 0.9rem; opacity: 0.85; }
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .pillar-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+    }
+    .pillar-card .icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+    .pillar-card h3 { font-weight: 700; margin-bottom: 0.5rem; color: var(--primary); }
+    .pillar-card ul { padding-left: 1.2rem; color: var(--text-muted); font-size: 0.9rem; }
+    .pillar-card ul li { margin-bottom: 0.3rem; }
+    .kwf-box {
+      background: #eff6ff;
+      border-radius: var(--radius);
+      padding: 2rem 2.5rem;
+      border: 1px solid #bfdbfe;
+      margin-bottom: 3rem;
+    }
+    .kwf-box h3 { font-weight: 700; color: var(--primary); margin-bottom: 1rem; }
+    .kwf-checklist { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .kwf-checklist li::before { content: "✅ "; }
+    .kwf-checklist li { font-size: 0.95rem; color: #374151; }
+    .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .step-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .step-num {
+      width: 40px; height: 40px;
+      background: var(--primary);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1rem;
+      margin: 0 auto 0.75rem;
+    }
+    .step-card h4 { font-weight: 700; margin-bottom: 0.35rem; font-size: 0.95rem; }
+    .step-card p { font-size: 0.85rem; color: var(--text-muted); }
+    .audience-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 3rem; }
+    .audience-card {
+      background: var(--light-bg);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .audience-card .icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .mission-box {
+      background: linear-gradient(135deg, var(--primary), #1e3a8a);
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      text-align: center;
+    }
+    .mission-box h3 { font-size: 1rem; font-weight: 600; opacity: 0.8; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+    .mission-box p { font-size: 1.1rem; font-style: italic; opacity: 0.95; max-width: 680px; margin: 0 auto; }
+
+    /* ── FAQ ── */
+    .faq-category { margin-bottom: 2.5rem; }
+    .faq-category h3 { font-weight: 700; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.25rem; }
+    .faq-item {
+      background: var(--white);
+      border-radius: var(--radius);
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .faq-q {
+      padding: 1rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    .faq-q:hover { background: #f8fafc; }
+    .faq-q .arrow { font-size: 0.8rem; transition: transform 0.2s; color: var(--text-muted); }
+    .faq-a {
+      padding: 0 1.25rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 1.25rem 1rem; }
+    .faq-item.open .arrow { transform: rotate(180deg); }
+
+    /* ── Contact ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .contact-info h3 { font-weight: 700; margin-bottom: 1rem; font-size: 1.1rem; }
+    .contact-detail {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .contact-detail .icon { font-size: 1.2rem; margin-top: 2px; }
+    .contact-detail p { font-size: 0.9rem; color: var(--text-muted); }
+    .contact-detail strong { color: #1e293b; display: block; font-size: 0.85rem; }
+    .educator-box {
+      background: var(--light-bg);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      border: 1px solid #bfdbfe;
+      margin-top: 2rem;
+    }
+    .educator-box h4 { font-weight: 700; margin-bottom: 0.5rem; color: var(--primary); }
+    .educator-box p { font-size: 0.88rem; color: var(--text-muted); }
+    .form-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+    .form-card h3 { font-weight: 700; margin-bottom: 1.5rem; font-size: 1.1rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.4rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: #1e293b;
+      background: #f9fafb;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--primary); background: var(--white); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: var(--white);
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+    .btn-submit:hover { background: var(--primary-dark); }
+
+    /* ── Footer ── */
+    footer {
+      background: #0f172a;
+      color: #94a3b8;
+      text-align: center;
+      padding: 2.5rem 2rem;
+      font-size: 0.85rem;
+      margin-top: 0;
+    }
+    footer strong { color: var(--white); }
+    footer p + p { margin-top: 0.4rem; }
+
+    /* ── Gray Section ── */
+    .section-gray { background: #f1f5f9; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1rem; }
+      .nav-links { display: none; }
+      .about-intro { grid-template-columns: 1fr; gap: 2rem; }
+      .pillars-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .cta-banner { margin: 0 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">GRAMATCH<span>A</span></div>
+  <div class="nav-links">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('about')">About</a>
+    <a href="#" onclick="showPage('lessons')">Lessons</a>
+    <a href="#" onclick="showPage('faq')">FAQ</a>
+    <a href="#" onclick="showPage('contact')" class="nav-cta">Contact Us</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HOME PAGE
+════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">📚 Free E-Learning Platform</div>
+    <h1>Matuto. Maintindihan.<br><span>Makipag-usap.</span></h1>
+    <p>GRAMATECHA is your free learning platform for <strong>Pasulat at Pasalitang Komunikasyon</strong> - with reading materials and video lessons grounded in the standards of the <strong>Komisyon sa Wikang Filipino</strong>.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showPage('lessons')">📖 Start Reading Lessons</button>
+      <button class="btn-outline" onclick="showPage('lessons')">🎬 Watch Video Lessons</button>
+    </div>
+  </section>
+
+  <!-- Feature Strip -->
+  <section class="strip">
+    <div class="strip-grid">
+      <div class="strip-card">
+        <div class="icon">📖</div>
+        <h3>Read at Your Pace</h3>
+        <p>Structured reading materials on Filipino grammar, written communication, and language standards - anytime, anywhere.</p>
+      </div>
+      <div class="strip-card">
+        <div class="icon">🎬</div>
+        <h3>Watch and Learn</h3>
+        <p>Video-based lessons that walk you through key concepts clearly, with examples you can actually use in real life.</p>
+      </div>
+      <div class="strip-card">
+        <div class="icon">📋</div>
+        <h3>Guided by KWF Standards</h3>
+        <p>All content aligns with the official guidelines of the Komisyon sa Wikang Filipino - so you're learning the right way.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why GRAMATECHA -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-label">About the Platform</div>
+      <h2>Bakit GRAMATECHA?</h2>
+      <p class="section-sub">Communication is a skill you build - not something you're just born with. GRAMATECHA gives you a clear path forward.</p>
+      <p style="color: #374151; max-width: 720px; margin-bottom: 1rem;">
+        Whether you're writing a formal letter, preparing a speech, or trying to understand why grammar rules exist in the first place - GRAMATECHA breaks it all down in a way that's structured, reliable, and easy to follow.
+      </p>
+      <p style="color: #374151; max-width: 720px;">
+        No confusing textbooks. No outdated content. Just clear, modern lessons - <strong>in Filipino, for Filipinos.</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured Lessons -->
+  <section class="section section-gray">
+    <div class="section-inner">
+      <div class="section-label">Featured Lessons</div>
+      <h2>Start Learning Today</h2>
+      <p class="section-sub">Pick a lesson and dive in - reading materials and video guides are available for every topic.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Aralin</th>
+              <th>Format</th>
+              <th>Antas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Ano ang Pasalitang Komunikasyon?</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>Mga Uri ng Pasulat na Komunikasyon</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>Komunikasyon ayon sa KWF</td><td>📖 Read</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>Pagsulat ng Pormal na Liham</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>Epektibong Pagsasalita</td><td>🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>Mga Pagkakamali sa Pasulat na Filipino</td><td>📖 Read</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top: 1.5rem;">
+        <button class="btn-primary" style="background: var(--primary); color: white; border: none; cursor: pointer; padding: 0.75rem 1.75rem; border-radius: 8px; font-weight: 700;" onclick="showPage('lessons')">See All Lessons →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Student Quotes -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-label">Student Testimonials</div>
+      <h2>What Students Are Saying</h2>
+      <div class="quotes-grid" style="margin-top: 2rem;">
+        <div class="quote-card">
+          <p>"Noon, nahihirapan ako sa pagsulat ng mga pormal na dokumento. Ngayon, mas malinaw na ang lahat sa akin - thanks to GRAMATECHA."</p>
+          <div class="quote-author">🎓 Estudyante, 2nd Year College</div>
+        </div>
+        <div class="quote-card">
+          <p>"Ang mga video lessons dito ay mas madaling intindihin kaysa sa mga textbook. Sobrang helpful lalo na para sa mga visual learner."</p>
+          <div class="quote-author">🎓 Senior High School Student</div>
+        </div>
+        <div class="quote-card">
+          <p>"Natutunan ko dito ang tamang paraan ng pakikipag-usap sa iba't ibang sitwasyon. Highly recommended talaga!"</p>
+          <div class="quote-author">🎓 3rd Year Education Major</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <h2>Handa ka na bang magsimula?</h2>
+    <p>GRAMATECHA is completely free. Just open a lesson - read it, watch it, and learn at your own pace.</p>
+    <div class="cta-banner-btns">
+      <button class="btn-dark" onclick="showPage('lessons')">📚 Browse All Lessons</button>
+      <button class="btn-white-outline" onclick="showPage('lessons')">🎬 Watch Free Videos</button>
+    </div>
+  </div>
+
+  <footer>
+    <p><strong>GRAMATECHA</strong> - Pasulat at Pasalitang Komunikasyon</p>
+    <p>Lahat ng nilalaman ay batay sa pamantayan ng Komisyon sa Wikang Filipino (KWF).</p>
+    <p style="margin-top:0.75rem; font-size:0.78rem;">© 2025 GRAMATECHA. Free educational platform for Filipino students.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ABOUT PAGE
+════════════════════════════════════════ -->
+<div id="page-about" class="page">
+  <section class="hero" style="padding: 4rem 2rem;">
+    <div class="hero-badge">📌 About the Platform</div>
+    <h1 style="font-size: clamp(1.8rem, 4vw, 2.8rem);">About <span>GRAMATECHA</span></h1>
+    <p>Isang platform para sa bawat mag-aaral na gustong matuto ng wastong komunikasyon sa Filipino.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-inner">
+      <!-- Intro -->
+      <div class="about-intro">
+        <div class="about-intro-text">
+          <div class="section-label">Our Story</div>
+          <h2>Isang Platform Para sa Bawat Mag-aaral</h2>
+          <p>GRAMATECHA was built with one goal in mind: to make learning <strong>Pasulat at Pasalitang Komunikasyon</strong> accessible, clear, and relevant for every Filipino student.</p>
+          <p>Language is the foundation of everything - how you express your ideas, how you write your thoughts, how you connect with other people. And yet, so many students struggle not because they lack the ability, but because the available resources are hard to follow.</p>
+          <p>We built GRAMATECHA to change that.</p>
+        </div>
+        <div class="about-visual">
+          <div class="big-icon">🇵🇭</div>
+          <h3>Para sa mga Pilipinong Estudyante</h3>
+          <p>Modern. Libre. Batay sa KWF.</p>
+        </div>
+      </div>
+
+      <!-- What We Teach -->
+      <div class="section-label">Curriculum</div>
+      <h2 style="margin-bottom: 1.5rem;">What We Teach</h2>
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="icon">✍️</div>
+          <h3>Pasulat na Komunikasyon</h3>
+          <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom:0.75rem;">Written Communication</p>
+          <ul>
+            <li>Pormal at impormal na pagsulat</li>
+            <li>Mga uri ng tekstong nakasulat</li>
+            <li>Gramatika at tamang gamit ng salita</li>
+            <li>Pagsulat ng liham, ulat, at iba pang dokumento</li>
+          </ul>
+        </div>
+        <div class="pillar-card">
+          <div class="icon">🗣️</div>
+          <h3>Pasalitang Komunikasyon</h3>
+          <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom:0.75rem;">Oral Communication</p>
+          <ul>
+            <li>Mga elemento ng epektibong pagsasalita</li>
+            <li>Pagbibigay ng talumpati at presentasyon</li>
+            <li>Pakikinig at pakikipag-usap</li>
+            <li>Mga estratehiya sa komunikasyon</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- KWF Box -->
+      <div class="kwf-box">
+        <h3>🏛️ Our Alignment with the KWF</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">All content on GRAMATECHA is based on the official language standards set by the <strong>Komisyon sa Wikang Filipino (KWF)</strong> - the national government agency responsible for developing, preserving, and promoting the Filipino language.</p>
+        <ul class="kwf-checklist">
+          <li>Terminolohiya na nakakaisa sa opisyal na pamantayan</li>
+          <li>Mga halimbawa na nakaangkop sa modernong paggamit ng Filipino</li>
+          <li>Wastong gramatika ayon sa KWF na mga alituntunin</li>
+        </ul>
+      </div>
+
+      <!-- How It Works -->
+      <div class="section-label">Platform Guide</div>
+      <h2 style="margin-bottom: 1.5rem;">How the Platform Works</h2>
+      <div class="how-steps">
+        <div class="step-card"><div class="step-num">1</div><h4>Browse Lessons</h4><p>Find a topic you want to learn from the full lesson catalog.</p></div>
+        <div class="step-card"><div class="step-num">2</div><h4>Choose Your Format</h4><p>Read the lesson, watch the video, or do both - your call.</p></div>
+        <div class="step-card"><div class="step-num">3</div><h4>Learn at Your Pace</h4><p>No deadlines. No pressure. Come back whenever you need.</p></div>
+        <div class="step-card"><div class="step-num">4</div><h4>Apply It</h4><p>Use the examples and activities built into each lesson.</p></div>
+      </div>
+
+      <!-- Audience -->
+      <div class="section-label">Who It's For</div>
+      <h2 style="margin-bottom: 1.5rem;">GRAMATECHA is For…</h2>
+      <div class="audience-grid">
+        <div class="audience-card"><div class="icon">🎓</div>Senior High School students studying Oral and Written Communication</div>
+        <div class="audience-card"><div class="icon">🎓</div>College students enrolled in Filipino communication subjects</div>
+        <div class="audience-card"><div class="icon">📚</div>Anyone who wants to improve their written and spoken Filipino</div>
+        <div class="audience-card"><div class="icon">👨‍🏫</div>Teachers looking for supplementary learning materials</div>
+      </div>
+
+      <!-- Mission -->
+      <div class="mission-box">
+        <h3>Our Mission</h3>
+        <p>"To give every Filipino student a clear, reliable, and modern learning experience in Pasulat at Pasalitang Komunikasyon - guided by the standards of the Komisyon sa Wikang Filipino."</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>GRAMATECHA</strong> - Pasulat at Pasalitang Komunikasyon</p>
+    <p>Lahat ng nilalaman ay batay sa pamantayan ng Komisyon sa Wikang Filipino (KWF).</p>
+    <p style="margin-top:0.75rem; font-size:0.78rem;">© 2025 GRAMATECHA. Free educational platform for Filipino students.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     LESSONS PAGE
+════════════════════════════════════════ -->
+<div id="page-lessons" class="page">
+  <section class="hero" style="padding: 4rem 2rem;">
+    <div class="hero-badge">📚 Lesson Catalog</div>
+    <h1 style="font-size: clamp(1.8rem, 4vw, 2.8rem);">Mga <span>Aralin</span></h1>
+    <p>Every lesson comes in two formats: reading materials and video lessons. Many include both. Browse by unit below.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-inner">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Aralin</th>
+              <th>Format</th>
+              <th>Antas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="unit-header"><td colspan="4">🔤 Unit 1: Panimula sa Komunikasyon</td></tr>
+            <tr><td>1.1</td><td>Ano ang Komunikasyon?</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>1.2</td><td>Mga Elemento ng Komunikasyon</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>1.3</td><td>Pasalitang vs. Pasulat na Komunikasyon</td><td>📖 Read</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>1.4</td><td>Ang KWF at ang Filipino Bilang Wikang Pambansa</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+
+            <tr class="unit-header"><td colspan="4">✍️ Unit 2: Pasulat na Komunikasyon</td></tr>
+            <tr><td>2.1</td><td>Mga Uri ng Pasulat na Komunikasyon</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>2.2</td><td>Pormal at Impormal na Pagsulat</td><td>📖 Read</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>2.3</td><td>Pagsulat ng Pormal na Liham</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>2.4</td><td>Pagsulat ng Memorandum at Ulat</td><td>📖 Read</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>2.5</td><td>Mga Karaniwang Pagkakamali sa Pasulat na Filipino</td><td>📖 Read</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>2.6</td><td>Tamang Bantas at Gamit ng Salita</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+
+            <tr class="unit-header"><td colspan="4">🗣️ Unit 3: Pasalitang Komunikasyon</td></tr>
+            <tr><td>3.1</td><td>Mga Katangian ng Mabuting Tagapagsalita</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>3.2</td><td>Pagbibigay ng Talumpati</td><td>🎬 Watch</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>3.3</td><td>Aktibong Pakikinig</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>3.4</td><td>Komunikasyon sa Iba't Ibang Sitwasyon</td><td>📖 Read</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>3.5</td><td>Verbal at Non-Verbal na Komunikasyon</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-green">Panimula</span></td></tr>
+
+            <tr class="unit-header"><td colspan="4">📋 Unit 4: KWF Standards at Wastong Filipino</td></tr>
+            <tr><td>4.1</td><td>Ang Opisyal na Alpabetong Filipino</td><td>📖 Read</td><td><span class="badge badge-green">Panimula</span></td></tr>
+            <tr><td>4.2</td><td>Mga Alituntuning Panggramatika ng KWF</td><td>📖 Read</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>4.3</td><td>Wastong Pagbabaybay at Gamit ng Salita</td><td>📖 Read &nbsp;🎬 Watch</td><td><span class="badge badge-yellow">Intermediate</span></td></tr>
+            <tr><td>4.4</td><td>Paggamit ng Filipino sa Pormal na Pakikipag-ugnayan</td><td>📖 Read</td><td><span class="badge badge-red">Advanced</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:2rem; align-items:center;">
+        <span style="font-size:0.85rem; color: var(--text-muted);">Format key:</span>
+        <span style="font-size:0.85rem;">📖 Reading Material</span>
+        <span style="font-size:0.85rem;">🎬 Video Lesson</span>
+        &nbsp;|&nbsp;
+        <span><span class="badge badge-green">Panimula</span> Beginner</span>
+        <span><span class="badge badge-yellow">Intermediate</span></span>
+        <span><span class="badge badge-red">Advanced</span></span>
+      </div>
+
+      <p style="margin-top:1.5rem; color: var(--text-muted); font-size:0.9rem;">All lessons are free. Click any lesson to start reading or watching right now.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>GRAMATECHA</strong> - Pasulat at Pasalitang Komunikasyon</p>
+    <p>Lahat ng nilalaman ay batay sa pamantayan ng Komisyon sa Wikang Filipino (KWF).</p>
+    <p style="margin-top:0.75rem; font-size:0.78rem;">© 2025 GRAMATECHA. Free educational platform for Filipino students.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     FAQ PAGE
+════════════════════════════════════════ -->
+<div id="page-faq" class="page">
+  <section class="hero" style="padding: 4rem 2rem;">
+    <div class="hero-badge">❓ Help Center</div>
+    <h1 style="font-size: clamp(1.8rem, 4vw, 2.8rem);">Mga Madalas na <span>Tanong</span></h1>
+    <p>Got questions? Here are the answers to the ones we hear most often.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-inner" style="max-width: 800px;">
+
+      <div class="faq-category">
+        <h3>🖥️ About the Platform</h3>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Libre ba ang GRAMATECHA? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes - completely free. All reading materials and video lessons on GRAMATECHA are available at no cost. No registration, no subscription, no hidden fees.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Kailangan ko bang mag-sign up para magamit ang platform? <span class="arrow">▼</span></div>
+          <div class="faq-a">Hindi na. You can browse and access all lessons without creating an account. Just go to the Lessons page and start learning.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Anong devices ang maaaring gamitin para sa GRAMATECHA? <span class="arrow">▼</span></div>
+          <div class="faq-a">GRAMATECHA works on any device - desktop, laptop, tablet, or mobile phone. As long as you have a browser and internet connection, you're good to go.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Anong wika ang ginagamit sa mga aralin? <span class="arrow">▼</span></div>
+          <div class="faq-a">Most lessons are written and recorded in Filipino, with some concepts explained using a mix of Filipino and English for clarity. This is intentional - so that the content is accessible to more students.</div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <h3>📖 About the Content</h3>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Sino ang gumawa ng mga aralin sa GRAMATECHA? <span class="arrow">▼</span></div>
+          <div class="faq-a">Our lessons are developed by educators with backgrounds in Filipino language, communication, and teaching. All content is reviewed against the official guidelines of the Komisyon sa Wikang Filipino (KWF).</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Tama ba ang mga leksyon dito ayon sa opisyal na pamantayan? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes. All content on GRAMATECHA aligns with KWF standards - the official national language authority of the Philippines. We regularly update our materials to reflect any changes in official language guidelines.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Para sa anong level ng pag-aaral ang GRAMATECHA? <span class="arrow">▼</span></div>
+          <div class="faq-a">GRAMATECHA is designed primarily for Senior High School and College students, but the content is structured so that anyone - regardless of level - can follow along. Lessons are tagged: Panimula (Beginner), Intermediate, and Advanced.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Mayroon bang activities o assessments? <span class="arrow">▼</span></div>
+          <div class="faq-a">Some lessons include guided reflection questions and practice activities built into the reading material. We are continuously adding more interactive content to the platform.</div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <h3>🎬 About Video Lessons</h3>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Saan naka-host ang mga video lessons? <span class="arrow">▼</span></div>
+          <div class="faq-a">All video lessons are streamed directly on the platform through an embedded video player - no need to be redirected to another site.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">May mga subtitle o closed captions ba ang mga videos? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes. Most video lessons include Filipino subtitles for accessibility. We are working to add closed captions to all video content.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Maaari ko bang i-download ang mga aralin? <span class="arrow">▼</span></div>
+          <div class="faq-a">At this time, lessons are only available for online viewing and reading. We are exploring offline access options for future updates.</div>
+        </div>
+      </div>
+
+      <div class="faq-category">
+        <h3>🔧 Technical & Support</h3>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Hindi gumagana ang isang aralin. Ano ang dapat kong gawin? <span class="arrow">▼</span></div>
+          <div class="faq-a">Try refreshing your browser or clearing your cache first. If the issue continues, please contact us through the Contact page and we'll look into it right away.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Maaari ko bang mag-suggest ng bagong paksa? <span class="arrow">▼</span></div>
+          <div class="faq-a">Absolutely. We welcome suggestions from students and teachers. Use the Contact page to send us your idea - we read every message.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">May certificate ba ang GRAMATECHA? <span class="arrow">▼</span></div>
+          <div class="faq-a">We are currently working on a certificate feature for students who complete full units. Stay tuned for updates.</div>
+        </div>
+      </div>
+
+      <div style="background: var(--light-bg); border-radius: var(--radius); padding: 1.5rem; text-align: center; border: 1px solid #bfdbfe;">
+        <p style="font-weight: 600; margin-bottom: 0.5rem;">Hindi mo pa nakita ang sagot sa iyong tanong?</p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Send us a message and we'll get back to you within 1–2 business days.</p>
+        <button class="btn-primary" style="background: var(--primary); color: white; border: none; cursor: pointer; padding: 0.7rem 1.5rem; border-radius: 8px; font-weight: 700;" onclick="showPage('contact')">📬 Contact Us →</button>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>GRAMATECHA</strong> - Pasulat at Pasalitang Komunikasyon</p>
+    <p>Lahat ng nilalaman ay batay sa pamantayan ng Komisyon sa Wikang Filipino (KWF).</p>
+    <p style="margin-top:0.75rem; font-size:0.78rem;">© 2025 GRAMATECHA. Free educational platform for Filipino students.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CONTACT PAGE
+════════════════════════════════════════ -->
+<div id="page-contact" class="page">
+  <section class="hero" style="padding: 4rem 2rem;">
+    <div class="hero-badge">📬 Get in Touch</div>
+    <h1 style="font-size: clamp(1.8rem, 4vw, 2.8rem);">Makipag-ugnayan sa <span>GRAMATECHA</span></h1>
+    <p>May tanong ka ba? Gusto mong mag-suggest ng paksa? We'd love to hear from you.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-inner">
+      <div class="contact-grid">
+
+        <!-- Left: Info -->
+        <div>
+          <h3>Narito Kami Para sa Iyo</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Fill out the form and we'll get back to you as soon as possible - usually within 1–2 business days.</p>
+
+          <div class="contact-detail">
+            <span class="icon">📧</span>
+            <div>
+              <strong>General Inquiries</strong>
+              <p>hello@gramatecha.ph</p>
+            </div>
+          </div>
+
+          <div class="contact-detail">
+            <span class="icon">📱</span>
+            <div>
+              <strong>Facebook Page</strong>
+              <p>facebook.com/GRAMATECHA</p>
+            </div>
+          </div>
+
+          <div class="contact-detail">
+            <span class="icon">🕐</span>
+            <div>
+              <strong>Response Time</strong>
+              <p>Within 1–2 business days</p>
+            </div>
+          </div>
+
+          <div class="educator-box">
+            <h4>👨‍🏫 For Teachers & Educators</h4>
+            <p>Looking to use GRAMATECHA as a supplementary resource in your class? We support educators who want to integrate our lessons into their curriculum.</p>
+            <p style="margin-top: 0.5rem;"><strong>educators@gramatecha.ph</strong></p>
+          </div>
+
+          <div style="margin-top: 1.5rem; padding: 1.25rem; background: #f8fafc; border-radius: var(--radius); border: 1px solid var(--border);">
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Before reaching out, check our <button onclick="showPage('faq')" style="background:none; border:none; color: var(--primary); font-weight:600; cursor:pointer; font-size:0.85rem;">FAQ page →</button> - you might find your answer there.</p>
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div class="form-card">
+          <h3>📩 Send Us a Message</h3>
+          <form onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Pangalan <span style="color:#ef4444">*</span></label>
+                <input type="text" placeholder="Ilagay ang iyong pangalan" required />
+              </div>
+              <div class="form-group">
+                <label>Email Address <span style="color:#ef4444">*</span></label>
+                <input type="email" placeholder="yourname@email.com" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Paksa / Subject</label>
+              <select>
+                <option value="">Pumili ng paksa…</option>
+                <option>General Inquiry</option>
+                <option>Lesson Suggestion</option>
+                <option>Technical Issue</option>
+                <option>Feedback</option>
+                <option>Partnership / Collaboration</option>
+                <option>For Teachers / Educators</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Mensahe <span style="color:#ef4444">*</span></label>
+              <textarea placeholder="Isulat ang iyong mensahe dito…" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Send Message →</button>
+          </form>
+          <div id="form-success" style="display:none; margin-top:1rem; background:#dcfce7; color:#166534; padding:1rem; border-radius:8px; font-size:0.9rem; font-weight:600; text-align:center;">
+            ✅ Mensahe natanggap! Babalikan ka namin sa loob ng 1–2 araw.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>GRAMATECHA</strong> - Pasulat at Pasalitang Komunikasyon</p>
+    <p>Lahat ng nilalaman ay batay sa pamantayan ng Komisyon sa Wikang Filipino (KWF).</p>
+    <p style="margin-top: 0.5rem; font-size: 0.78rem; opacity: 0.7;">GRAMATECHA is a free educational platform for Filipino students. We are not affiliated with KWF unless otherwise stated.</p>
+    <p style="margin-top:0.75rem; font-size:0.78rem;">© 2025 GRAMATECHA. Free educational platform for Filipino students.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleFaq(el) {
+    const item = el.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    document.getElementById('form-success').style.display = 'block';
+    e.target.reset();
+    setTimeout(() => {
+      document.getElementById('form-success').style.display = 'none';
+    }, 5000);
+  }
+</script>
+
+</body>
+</html>

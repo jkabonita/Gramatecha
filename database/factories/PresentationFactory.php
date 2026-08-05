@@ -17,11 +17,15 @@ class PresentationFactory extends Factory
      */
     public function definition(): array
     {
+        $fileTypes = ['pptx', 'mp4', 'mov'];
+        $fileType = fake()->randomElement($fileTypes);
+        
         return [
             'title' => fake()->sentence(),
             'description' => fake()->paragraph(),
-            'filename' => fake()->word() . '.pptx',
+            'filename' => fake()->word() . '.' . $fileType,
             'file_size' => fake()->numberBetween(100000, 50000000),
+            'file_type' => $fileType,
             'cloudinary_public_id' => 'presentations/' . fake()->uuid(),
             'cloudinary_url' => fake()->url(),
             'uploaded_by' => User::factory(),

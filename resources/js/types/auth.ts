@@ -13,6 +13,13 @@ export type Auth = {
     user: User;
 };
 
+export interface PageProps {
+    auth: {
+        user: User | null;
+    };
+    [key: string]: unknown;
+}
+
 /* @chisel-passkeys */
 export type Passkey = {
     id: number;

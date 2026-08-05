@@ -14,9 +14,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $description
  * @property string $filename
  * @property int $file_size
+ * @property string $file_type
  * @property string $cloudinary_public_id
  * @property string $cloudinary_url
  * @property int $uploaded_by
+ * @property int $views_count
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read User $uploader
@@ -26,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'description',
     'filename',
     'file_size',
+    'file_type',
     'cloudinary_public_id',
     'cloudinary_url',
     'uploaded_by',
@@ -65,7 +68,7 @@ class Presentation extends Model
         $units = ['B', 'KB', 'MB', 'GB'];
         $bytes = $this->file_size;
         
-        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+        for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) {
             $bytes /= 1024;
         }
         
@@ -78,6 +81,28 @@ class Presentation extends Model
     public function getCloudinaryViewUrl(): string
     {
         $cloudName = config('services.cloudinary.cloud_name', 'io7qeps0');
-        return "https://res.cloudinary.com/{$cloudName}/image/upload/f_auto,q_auto/{$this->cloudinary_public_id}";
+        
+        // Determine resource type based on file extension
+        $isPdf = str_contains(strtolower($this->filename), '.pdf');
+        $isVideo = in_array(strtolower($this->file_type), ['mp4', 'mov', 'avi', 'video']);
+        
+        if ($isPdf) {
+            // For PDFs, use raw resource type with inline flag
+            return "https://res.cloudinary.com/{$cloudName}/raw/upload/fl_attachment:false/{$this->cloudinary_public_id}";
+        } elseif ($isVideo) {
+            // For videos, use video resource type
+            return "https://res.cloudinary.com/{$cloudName}/video/upload/{$this->cloudinary_public_id}";
+        } else {
+            // For other files (PPTX, etc), use raw resource type with inline flag
+            return "https://res.cloudinary.com/{$cloudName}/raw/upload/fl_attachment:false/{$this->cloudinary_public_id}";
+        }
+    }
+    
+    /**
+     * Get the Cloudinary URL for inline viewing (forces browser to display, not download).
+     */
+    public function getInlineViewUrl(): string
+    {
+        return $this->getCloudinaryViewUrl();
     }
 }
