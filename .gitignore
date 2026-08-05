@@ -27,3 +27,13 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# AI Assistant & Development Tools
+/.kiro
+/.ai
+/.cursor
+/.github/skills
+.aider*
+.claude*
+*.ai.md
+IMPLEMENTATION_SUMMARY.md
