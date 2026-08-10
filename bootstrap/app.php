@@ -13,6 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            // Register streaming routes with MINIMAL middleware
+            // Only SubstituteBindings (for route model binding) and throttle
+            // No session, CSRF, cookies, encryption for maximum performance
+            Route::middleware([\Illuminate\Routing\Middleware\SubstituteBindings::class])
+                ->group(base_path('routes/streaming.php'));
+        }
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
@@ -21,6 +28,11 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
+        ]);
+
+        // Register middleware aliases
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureIsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
