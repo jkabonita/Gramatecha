@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('presentations', function (Blueprint $table) {
-            $table->string('file_type')->after('file_size');
+        Schema::table('quiz_attempts', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->change();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('presentations', function (Blueprint $table) {
-            $table->dropColumn('file_type');
+        Schema::table('quiz_attempts', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable(false)->change();
         });
     }
 };

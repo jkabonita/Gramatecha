@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
         // Create admin user for testing
         $this->call(AdminUserSeeder::class);
 
+        // Seed comprehensive Filipino quizzes
+        $this->call(ComprehensiveQuizSeeder::class);
+
         // User::factory(10)->create();
 
         User::factory()->create([

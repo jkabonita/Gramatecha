@@ -13,30 +13,15 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create admin@admin.com user for testing
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@admin.com'],
             [
-                'name' => 'Admin User',
+                'name' => 'Admin',
+                'email' => 'admin@admin.com',
                 'password' => Hash::make('password'),
                 'role' => 'admin',
                 'email_verified_at' => now(),
             ]
         );
-
-        // Create admin@gramatecha.com user for testing
-        User::firstOrCreate(
-            ['email' => 'admin@gramatecha.com'],
-            [
-                'name' => 'Gramatecha Admin',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-                'email_verified_at' => now(),
-            ]
-        );
-
-        $this->command->info('Admin users created successfully!');
-        $this->command->info('Email: admin@admin.com | Password: password');
-        $this->command->info('Email: admin@gramatecha.com | Password: password');
     }
 }
