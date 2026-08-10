@@ -24,7 +24,20 @@ class PresentationStoreRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'file' => ['required', 'file', 'mimes:ppt,pptx,mp4,mov', 'max:102400'], // 100MB in KB
+            'file' => [
+                'required',
+                'file',
+                'max:512000', // 500MB in KB
+                function ($attribute, $value, $fail) {
+                    $extension = strtolower($value->getClientOriginalExtension());
+                    $allowedExtensions = ['pdf', 'ppt', 'pptx', 'mp4', 'mov'];
+                    
+                    if (!in_array($extension, $allowedExtensions)) {
+                        $fail('The file must be a PDF, PowerPoint presentation (ppt, pptx) or video (mp4, mov).');
+                    }
+                },
+            ],
+            'category_id' => ['nullable', 'exists:categories,id'],
         ];
     }
 
@@ -37,8 +50,9 @@ class PresentationStoreRequest extends FormRequest
     {
         return [
             'file.required' => 'Please select a file to upload.',
-            'file.mimes' => 'The file must be a PowerPoint presentation (ppt, pptx) or video (mp4, mov).',
-            'file.max' => 'The file size must not exceed 100MB.',
+            'file.mimes' => 'The file must be a PDF, PowerPoint presentation (ppt, pptx) or video (mp4, mov).',
+            'file.max' => 'The file size must not exceed 500MB.',
+            'category_id.exists' => 'The selected category does not exist.',
         ];
     }
 }

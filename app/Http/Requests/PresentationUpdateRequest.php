@@ -24,6 +24,7 @@ class PresentationUpdateRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
+            'category_id' => ['nullable', 'exists:categories,id'],
         ];
     }
 }
