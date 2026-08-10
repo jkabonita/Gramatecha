@@ -13,6 +13,19 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    # IMPORTANT: Allow direct access to files in /presentations/ directory
+    # This ensures videos/PDFs are served directly by Apache for caching
+    RewriteCond %{REQUEST_URI} ^/presentations/[^/]+\.(mp4|webm|mov|avi|pdf|ppt|pptx)$ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # IMPORTANT: Force Laravel routes that share a name with a real directory
+    # through index.php. The /presentations directory exists for static files,
+    # but /presentations (no extension, with or without trailing slash) must be handled by Laravel.
+    RewriteCond %{REQUEST_URI} ^/presentations(/.*)?$ [NC]
+    RewriteCond %{REQUEST_URI} !\.(mp4|webm|mov|avi|pdf|ppt|pptx)$ [NC]
+    RewriteRule ^ index.php [L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
@@ -22,4 +35,98 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# ── Browser Caching for Static Assets ────────────────────────────────────────
+# Enable strong caching for videos and PDFs (like YouTube)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Videos - Cache for 1 year (immutable once uploaded)
+    ExpiresByType video/mp4 "access plus 1 year"
+    ExpiresByType video/webm "access plus 1 year"
+    ExpiresByType video/quicktime "access plus 1 year"
+    ExpiresByType video/x-msvideo "access plus 1 year"
+    
+    # PDFs and documents - Cache for 1 month
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType application/vnd.ms-powerpoint "access plus 1 month"
+    ExpiresByType application/vnd.openxmlformats-officedocument.presentationml.presentation "access plus 1 month"
+    
+    # Images - Cache for 1 month
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    
+    # CSS/JS - Cache for 1 week
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# Add Cache-Control headers for better caching
+<IfModule mod_headers.c>
+    # Videos - Immutable caching (1 year)
+    <FilesMatch "\.(mp4|webm|mov|avi)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    
+    # PDFs and documents - 1 month caching
+    <FilesMatch "\.(pdf|ppt|pptx)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+</IfModule>
+
+# ── Video / media streaming ──────────────────────────────────────────────────
+# Allow byte-range requests so browsers can seek/buffer video
+<IfModule mod_headers.c>
+    # Pass Range header through to PHP
+    RequestHeader set Range %{HTTP_RANGE}e env=HTTP_RANGE
+
+    # Allow partial content responses (required for HTML5 video)
+    Header always set Accept-Ranges bytes
+
+    # Proper MIME types for video
+    <FilesMatch "\.(mp4|webm|mov|avi)$">
+        Header set Content-Type "video/mp4"
+        Header set Accept-Ranges bytes
+    </FilesMatch>
+</IfModule>
+
+# ── CRITICAL: Disable compression for video files ────────────────────────────
+# Compressing already-compressed video files causes CPU freeze and 7-10s delays
+# Video files (MP4, WebM, MOV, AVI) are already compressed and should be excluded
+<IfModule mod_deflate.c>
+    # Enable compression for text-based files only
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml
+
+    # NEVER compress video, audio, or already-compressed files
+    SetEnvIfNoCase Request_URI \.(?:mp4|webm|mov|avi|mp3|wav|flac|jpg|jpeg|png|gif|zip|rar|7z|pdf)$ no-gzip dont-vary
+</IfModule>
+
+# Alternative: Disable Brotli compression for videos
+<IfModule mod_brotli.c>
+    # Enable Brotli for text files
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css text/javascript application/javascript application/json
+
+    # Exclude videos and media
+    SetEnvIfNoCase Request_URI \.(?:mp4|webm|mov|avi|mp3|wav|flac|jpg|jpeg|png|gif|zip|rar|7z|pdf)$ no-brotli
+</IfModule>
+
+# Correct MIME types
+<IfModule mod_mime.c>
+    AddType video/mp4         .mp4
+    AddType video/webm        .webm
+    AddType video/quicktime   .mov
+    AddType video/x-msvideo   .avi
+    AddType application/pdf   .pdf
+</IfModule>
+
+# PHP Upload Limits (for 500MB file uploads)
+<IfModule mod_php.c>
+  php_value upload_max_filesize 300M
+  php_value post_max_size 305M
+  php_value memory_limit 512M
+  php_value max_execution_time 1200
+  php_value max_input_time 1200
 </IfModule>
