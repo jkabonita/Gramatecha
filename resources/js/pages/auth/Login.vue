@@ -29,7 +29,7 @@ defineProps<{
 
     <div
         v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="mb-4 rounded-lg border border-green-200 bg-green-50 p-4 text-center text-sm font-medium text-green-800 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400"
     >
         {{ status }}
     </div>
@@ -40,9 +40,9 @@ defineProps<{
         v-slot="{ errors, processing }"
         class="flex flex-col gap-6"
     >
-        <div class="grid gap-6">
-            <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+        <div class="grid gap-5">
+            <div class="grid gap-2.5">
+                <Label for="email" class="text-sm font-medium">Email address</Label>
                 <Input
                     id="email"
                     type="email"
@@ -52,20 +52,21 @@ defineProps<{
                     :tabindex="1"
                     autocomplete="email"
                     placeholder="email@example.com"
+                    class="h-11"
                 />
                 <InputError :message="errors.email" />
             </div>
 
-            <div class="grid gap-2">
+            <div class="grid gap-2.5">
                 <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
+                    <Label for="password" class="text-sm font-medium">Password</Label>
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
-                        class="text-sm"
+                        class="text-xs font-medium hover:underline"
                         :tabindex="5"
                     >
-                        Forgot your password?
+                        Forgot password?
                     </TextLink>
                 </div>
                 <PasswordInput
@@ -74,27 +75,28 @@ defineProps<{
                     required
                     :tabindex="2"
                     autocomplete="current-password"
-                    placeholder="Password"
+                    placeholder="Enter your password"
+                    class="h-11"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="flex items-center justify-between">
-                <Label for="remember" class="flex items-center space-x-3">
+                <Label for="remember" class="flex items-center gap-2.5 text-sm font-normal cursor-pointer">
                     <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
+                    <span class="leading-none">Remember me</span>
                 </Label>
             </div>
 
             <Button
                 type="submit"
-                class="mt-4 w-full"
+                class="mt-2 h-11 w-full text-sm font-semibold"
                 :tabindex="4"
                 :disabled="processing"
                 data-test="login-button"
             >
-                <Spinner v-if="processing" />
-                Log in
+                <Spinner v-if="processing" class="mr-2" />
+                {{ processing ? 'Logging in...' : 'Log in' }}
             </Button>
         </div>
     </Form>
