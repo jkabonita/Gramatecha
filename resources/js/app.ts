@@ -1,10 +1,10 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createApp, h } from 'vue';
+import { createApp, h, DefineComponent } from 'vue';
 import { initializeTheme } from '@/composables/useAppearance';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import PresentationLayout from '@/layouts/PresentationLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 
@@ -12,35 +12,29 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
-    resolve: (name) =>
-        resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
-    layout: (name) => {
-        switch (true) {
-            case name === 'Welcome':
-            case name === 'Landing':
-                return PresentationLayout;
-            case name.startsWith('Presentations/'):
-                return PresentationLayout;
-            case name.startsWith('auth/'):
-                return AuthLayout;
-            case name.startsWith('settings/'):
-                return [AppLayout, SettingsLayout];
-            default:
-                return AppLayout;
-        }
+    resolve: async (name) => {
+        const page = await resolvePageComponent(
+            `./pages/${name}.vue`,
+            import.meta.glob<DefineComponent>('./pages/**/*.vue')
+        );
+        return page;
     },
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .mount(el);
+        const app = createApp({ render: () => h(App, props) }).use(plugin);
+
+        // Only mount on client side (el is an Element)
+        // During SSR, el is a string selector
+        if (typeof el !== 'string') {
+            // Initialize client-side only features before mount
+            initializeTheme();
+            initializeFlashToast();
+
+            app.mount(el);
+        }
+
+        return app;
     },
     progress: {
         color: '#4B5563',
     },
 });
-
-// This will set light / dark mode on page load...
-initializeTheme();
-
-// This will listen for flash toast data from the server...
-initializeFlashToast();
