@@ -31,10 +31,18 @@ const { presentation, fileTypeIcon, formattedFileSize, index = 0 } = defineProps
 
 const isVisible = ref(false);
 
+// Check for reduced motion preference
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 onMounted(() => {
-    setTimeout(() => {
-        isVisible.value = true;
-    }, index * 100); // Stagger animation based on index
+    // Respect user's motion preferences
+    if (prefersReducedMotion) {
+        isVisible.value = true; // Show immediately without animation
+    } else {
+        setTimeout(() => {
+            isVisible.value = true;
+        }, Math.min(index * 75, 500)); // Cap max delay at 500ms
+    }
 });
 
 const truncateText = (text: string | null, maxLength: number): string => {
@@ -89,12 +97,12 @@ const getThumbnailUrl = (): string => {
     <Link
         :href="`/presentations/${presentation.id}`"
         :class="[
-            'group block overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10',
-            'border-sidebar-border/70 dark:border-sidebar-border',
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+            'group block overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10',
+            'border-sidebar-border/70 dark:border-sidebar-border touch-manipulation',
+            isVisible ? 'translate-y-0 opacity-100' : prefersReducedMotion ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
         ]"
     >
-        <!-- Thumbnail -->
+        <!-- Thumbnail (responsive) -->
         <div class="relative aspect-video overflow-hidden bg-muted">
             <img
                 :src="getThumbnailUrl()"
@@ -108,46 +116,46 @@ const getThumbnailUrl = (): string => {
             <!-- Gradient overlay on hover -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             
-            <!-- File type badge -->
-            <div class="absolute left-3 top-3 rounded-full bg-background/95 px-3 py-1.5 text-lg backdrop-blur-sm shadow-lg ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-110">
+            <!-- File type badge (responsive) -->
+            <div class="absolute left-2 top-2 sm:left-3 sm:top-3 rounded-full bg-background/95 px-2 py-1 sm:px-3 sm:py-1.5 text-base sm:text-lg backdrop-blur-sm shadow-lg ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-110">
                 {{ fileTypeIcon }}
             </div>
 
-            <!-- View indicator on hover -->
-            <div class="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-background/95 px-3 py-1.5 text-xs font-medium backdrop-blur-sm opacity-0 transition-all duration-300 group-hover:opacity-100">
+            <!-- View indicator on hover (responsive) -->
+            <div class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex items-center gap-1 sm:gap-1.5 rounded-full bg-background/95 px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-medium backdrop-blur-sm opacity-0 transition-all duration-300 group-hover:opacity-100">
                 <Eye class="h-3 w-3" />
                 <span>View</span>
             </div>
         </div>
 
-        <!-- Content -->
-        <div class="p-5">
-            <h3 class="mb-2 text-lg font-semibold text-foreground transition-colors line-clamp-2 group-hover:text-primary">
+        <!-- Content (responsive) -->
+        <div class="p-4 sm:p-5">
+            <h3 class="mb-2 text-base sm:text-lg font-semibold text-foreground transition-colors line-clamp-2 group-hover:text-primary">
                 {{ truncateText(presentation.title, 60) }}
             </h3>
 
             <p
                 v-if="presentation.description"
-                class="mb-4 line-clamp-2 text-sm text-muted-foreground"
+                class="mb-3 sm:mb-4 line-clamp-2 text-xs sm:text-sm text-muted-foreground"
             >
                 {{ presentation.description }}
             </p>
-            <p v-else class="mb-4 text-sm italic text-muted-foreground">
+            <p v-else class="mb-3 sm:mb-4 text-xs sm:text-sm italic text-muted-foreground">
                 No description available
             </p>
 
-            <!-- Metadata -->
-            <div class="space-y-2 text-xs text-muted-foreground">
+            <!-- Metadata (responsive) -->
+            <div class="space-y-2 text-xs sm:text-sm text-muted-foreground">
                 <div class="flex items-center gap-2 transition-colors group-hover:text-foreground">
-                    <User class="h-3.5 w-3.5" />
-                    <span class="font-medium">{{ presentation.uploader.name }}</span>
+                    <User class="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                    <span class="font-medium truncate">{{ presentation.uploader.name }}</span>
                 </div>
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
-                        <Calendar class="h-3.5 w-3.5" />
-                        <span>{{ formatDate(presentation.created_at) }}</span>
+                        <Calendar class="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                        <span class="text-xs">{{ formatDate(presentation.created_at) }}</span>
                     </div>
-                    <span class="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary">
+                    <span class="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary whitespace-nowrap">
                         {{ formattedFileSize }}
                     </span>
                 </div>

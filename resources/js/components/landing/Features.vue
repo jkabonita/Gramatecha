@@ -1,184 +1,319 @@
 <script setup lang="ts">
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Video, FileCheck, GraduationCap, DollarSign, Globe } from '@lucide/vue';
+import { ref } from 'vue';
+import { useScrollReveal, useStaggerReveal } from '@/composables/useScrollReveal';
 
-interface FeaturesProps {
-    icon: any;
-    title: string;
-    description: string;
-}
-
-const featureList: FeaturesProps[] = [
+const features = [
     {
-        icon: BookOpen,
-        title: 'Read at Your Pace',
-        description:
-            'Structured reading materials on Filipino grammar, written communication, and language standards - anytime, anywhere.',
+        icon: '📖',
+        title: 'Magbasa sa Sariling Bilis',
+        desc: 'Mga nakaayos na babasahin tungkol sa gramatikang Filipino, pasulat na komunikasyon, at pamantayan ng wika — kahit saan, kahit kailan.',
     },
     {
-        icon: Video,
-        title: 'Watch and Learn',
-        description:
-            'Video-based lessons that walk you through key concepts clearly, with examples you can actually use in real life.',
+        icon: '🎬',
+        title: 'Manood at Matuto',
+        desc: 'Mga aralin sa pamamagitan ng video na nagpapaliwanag ng mahahalagang konsepto nang malinaw, na may mga halimbawang magagamit sa tunay na buhay.',
     },
     {
-        icon: FileCheck,
-        title: 'Guided by KWF Standards',
-        description:
-            'All content aligns with the official guidelines of the Komisyon sa Wikang Filipino - so you\'re learning the right way.',
-    },
-    {
-        icon: GraduationCap,
-        title: 'For Filipino Students',
-        description:
-            'Designed specifically for Senior High School and College students studying Oral and Written Communication in Filipino.',
-    },
-    {
-        icon: DollarSign,
-        title: 'Completely Free',
-        description:
-            'No registration required. No hidden fees. Access all reading materials and video lessons without any cost.',
-    },
-    {
-        icon: Globe,
-        title: 'Modern Filipino Content',
-        description:
-            'Clear, modern lessons - in Filipino, for Filipinos. No confusing textbooks. No outdated content.',
+        icon: '📋',
+        title: 'Batay sa Pamantayan ng KWF',
+        desc: 'Ang lahat ng nilalaman ay naaayon sa opisyal na alituntunin ng Komisyon sa Wikang Filipino — upang matiyak na tama ang iyong natuttunan.',
     },
 ];
+
+const lessons = [
+    { title: 'Ano ang Pasalitang Komunikasyon?', format: '📖 Read · 🎬 Watch', level: 'Panimula', color: 'green' },
+    { title: 'Mga Uri ng Pasulat na Komunikasyon', format: '📖 Read · 🎬 Watch', level: 'Panimula', color: 'green' },
+    { title: 'Komunikasyon ayon sa KWF', format: '📖 Read', level: 'Intermediate', color: 'yellow' },
+    { title: 'Pagsulat ng Pormal na Liham', format: '📖 Read · 🎬 Watch', level: 'Intermediate', color: 'yellow' },
+    { title: 'Epektibong Pagsasalita', format: '🎬 Watch', level: 'Panimula', color: 'green' },
+    { title: 'Mga Pagkakamali sa Pasulat na Filipino', format: '📖 Read', level: 'Intermediate', color: 'yellow' },
+];
+
+const badgeClass: Record<string, string> = {
+    green: 'bg-green-100 text-green-800',
+    yellow: 'bg-yellow-100 text-yellow-800',
+    red: 'bg-red-100 text-red-800',
+};
+
+const quotes = [
+    {
+        text: '"Noon, nahihirapan ako sa pagsulat ng mga pormal na dokumento. Ngayon, mas malinaw na ang lahat sa akin — thanks to GRAMATECHA."',
+        author: '🎓 Estudyante, 2nd Year College',
+    },
+    {
+        text: '"Ang mga video lessons dito ay mas madaling intindihin kaysa sa mga textbook. Sobrang helpful lalo na para sa mga visual learner."',
+        author: '🎓 Senior High School Student',
+    },
+    {
+        text: `"Natutunan ko dito ang tamang paraan ng pakikipag-usap sa iba't ibang sitwasyon. Highly recommended talaga!"`,
+        author: '🎓 3rd Year Education Major',
+    },
+];
+
+// ── Refs for scroll-reveal sections ─────────────────────────────────────────
+const featureStrip   = ref<HTMLElement | null>(null);
+const whyHeading     = ref<HTMLElement | null>(null);
+const whyList        = ref<HTMLElement | null>(null);  // ol container
+const quoteRow1      = ref<HTMLElement | null>(null);
+const quoteRow2      = ref<HTMLElement | null>(null);
+const quoteRow3      = ref<HTMLElement | null>(null);
+const quoteRow4      = ref<HTMLElement | null>(null);
+const lessonsSection = ref<HTMLElement | null>(null);
+const testimonialsEl = ref<HTMLElement | null>(null);
+const ctaBanner      = ref<HTMLElement | null>(null);
+
+// Feature cards — staggered fade-up
+useStaggerReveal(featureStrip, '.reveal-card');
+
+// "Why" heading — simple reveal
+useScrollReveal(whyHeading);
+
+// "Why" numbered list — staggered slide-in on the <li> children
+useStaggerReveal(whyList, 'li');
+
+// Quote rows — each row revealed independently
+useScrollReveal([quoteRow1, quoteRow2, quoteRow3, quoteRow4], { threshold: 0.12 });
+
+// Lessons table
+useScrollReveal(lessonsSection);
+
+// Testimonials — staggered cards
+useStaggerReveal(testimonialsEl, '.reveal-card');
+
+// CTA banner
+useScrollReveal(ctaBanner, { threshold: 0.2 });
 </script>
 
 <template>
-    <section id="features" class="container py-24 sm:py-32 bg-white relative overflow-hidden">
+    <!-- ── Feature Strip ─────────────────────────────────────────────── -->
+    <section class="bg-white py-16 px-4">
+        <div ref="featureStrip" class="mx-auto max-w-5xl grid gap-6 sm:grid-cols-3">
+            <div
+                v-for="f in features"
+                :key="f.title"
+                class="reveal-card reveal-up rounded-2xl bg-green-50 border border-green-100 p-8 text-center transition-shadow hover:shadow-md hover:-translate-y-1 duration-200"
+            >
+                <div class="text-4xl mb-3">{{ f.icon }}</div>
+                <h3 class="font-bold text-green-800 mb-2">{{ f.title }}</h3>
+                <p class="text-sm text-gray-500 leading-relaxed">{{ f.desc }}</p>
+            </div>
+        </div>
+    </section>
 
-        <div class="relative z-10">
-            <h2 class="text-sm text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-center mb-2 tracking-wider font-bold uppercase animate-fade-in">
-                Features
-            </h2>
+    <!-- ── Why GRAMATECHA ─────────────────────────────────────────────── -->
+    <section ref="whySection" class="py-16 px-4">
+        <div class="mx-auto max-w-4xl">
+            <p class="text-xs font-bold uppercase tracking-widest text-green-600 mb-1">About the Platform</p>
+            <h2 ref="whyHeading" class="reveal-up text-3xl font-extrabold text-gray-900 mb-3">Bakit GRAMATECHA?</h2>
+            <p class="text-gray-700 max-w-2xl mb-8">
+                Ang Gramatecha ay isang makabagong educational website na nakatuon sa
+                pagpapalalim ng kaalaman sa wikang Filipino, pasulat at pasalitang komunikasyon, at balarila
+                o gramatika. Pinagsasama nito ang batayang alituntunin ng wika at ang kapangyarihan ng
+                modernong teknolohiya upang magbigay ng accessible at komprehensibong gabay sa pagkatuto.
+            </p>
 
-            <h2 class="text-3xl md:text-4xl text-center font-bold mb-4 text-gray-900 animate-fade-in animation-delay-200">
-                Bakit <span class="text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text">GRAMATECHA</span>?
-            </h2>
-
-            <h3 class="md:w-1/2 mx-auto text-xl text-center text-gray-600 mb-12 animate-fade-in animation-delay-400">
-                Communication is a skill you build - not something you're just born with. GRAMATECHA gives you a clear path forward.
-            </h3>
-
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div 
-                    v-for="({ icon, title, description }, index) in featureList" 
-                    :key="title"
-                    class="feature-card animate-fade-in-up"
-                    :style="{ animationDelay: `${(index + 1) * 100}ms` }"
+            <ol ref="whyList" class="space-y-5">
+                <li
+                    v-for="(_, idx) in 3"
+                    :key="idx"
+                    class="reveal-card reveal-left flex gap-4 items-start"
+                    :style="`--stagger: ${idx}`"
                 >
-                    <Card class="h-full bg-white border-2 border-blue-100 shadow-lg hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 hover:border-blue-300 group relative overflow-hidden">
-                        
-                        <CardHeader class="flex justify-center items-center relative z-10">
-                            <div
-                                class="bg-gradient-to-br from-blue-100 to-indigo-100 p-4 rounded-full ring-8 ring-blue-50 mb-4 group-hover:ring-blue-100 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 relative"
-                            >
-                                <!-- Animated pulse ring -->
-                                <div class="absolute inset-0 bg-blue-400/30 rounded-full animate-ping-slow opacity-0 group-hover:opacity-100"></div>
-                                <component :is="icon" class="h-8 w-8 text-blue-600 group-hover:text-indigo-600 transition-colors duration-500 relative z-10 group-hover:scale-110" />
-                            </div>
+                    <span class="flex-shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-green-700 text-white font-bold text-sm">{{ idx + 1 }}</span>
+                    <p class="text-gray-700 leading-relaxed pt-0.5">
+                        <template v-if="idx === 0">
+                            Nakatutok ito sa buong saklaw ng wika—mula sa ponolohiya, morpolohiya, at
+                            ortograpiya, hanggang sa praktikal na aplikasyon sa mabisang pagsulat at pagsasalita.
+                        </template>
+                        <template v-else-if="idx === 1">
+                            Ginagawang mas makabago, dinamiko, at madaling maunawaan ang mga pormal na
+                            aralin sa wika sa tulong ng mga visual diagrams, audio guides, at instructional videos.
+                        </template>
+                        <template v-else>
+                            Hindi lamang ito nakadisenyo para pumasa sa pagsusulit, inuunawa nito ang mga
+                            sikolohikal at pisikal na salik ng komunikasyon upang tulungan ang bawat mag-aaral
+                            na maging mahusay na tagapagsalita at manunulat.
+                        </template>
+                    </p>
+                </li>
+            </ol>
+        </div>
+    </section>
 
-                            <CardTitle class="text-gray-900 group-hover:text-blue-700 transition-colors duration-300 text-center">
-                                {{ title }}
-                            </CardTitle>
-                        </CardHeader>
+    <!-- ── Photo Quotes ──────────────────────────────────────────────── -->
+    <section ref="quotesSection" class="py-14 px-4 bg-white">
+        <div class="mx-auto max-w-4xl space-y-14">
 
-                        <CardContent class="text-gray-600 text-center relative z-10 group-hover:text-gray-700 transition-colors duration-300">
-                            {{ description }}
-                        </CardContent>
-
-                        <!-- Corner accent -->
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/0 to-indigo-400/0 group-hover:from-blue-400/20 group-hover:to-indigo-400/20 transition-all duration-500 rounded-bl-full"></div>
-                    </Card>
+            <!-- Row 1 — photo LEFT, quote RIGHT -->
+            <div ref="quoteRow1" class="reveal-up flex flex-col sm:flex-row items-center gap-8">
+                <div class="flex-shrink-0 w-64 overflow-hidden rounded-xl shadow-md border border-gray-200 bg-white">
+                    <img src="/home/Home1.png" alt="Home 1" class="w-full h-auto object-contain" />
                 </div>
+                <blockquote class="flex-1 italic text-gray-700 text-base sm:text-lg leading-relaxed">
+                    "Dumating na ang panahon sa atin upang magkaraoon ng isang pambansang wika. Hangga't hindi nagkakaroon niyon, tayo'y hindi magiging isang bayan."
+                    <footer class="mt-3 not-italic text-sm font-semibold text-green-700">— Manuel L. Quezon</footer>
+                </blockquote>
+            </div>
+
+            <!-- Row 2 — quote LEFT, photo RIGHT -->
+            <div ref="quoteRow2" class="reveal-up flex flex-col sm:flex-row-reverse items-center gap-8">
+                <div class="flex-shrink-0 w-64 overflow-hidden rounded-xl shadow-md border border-gray-200 bg-white">
+                    <img src="/home/Home2.png" alt="Home 2" class="w-full h-auto object-contain" />
+                </div>
+                <blockquote class="flex-1 italic text-gray-700 text-base sm:text-lg leading-relaxed">
+                    "Kung ano ang wika, iyon ang pagkatao mo. Sa larangang pambansa, ang wika ng bayan ay ang bayan… ang karanasan at kaalaman ng gumagamit na bayan."
+                    <footer class="mt-3 not-italic text-sm font-semibold text-green-700">— Virgilio S. Almario</footer>
+                </blockquote>
+            </div>
+
+            <!-- Row 3 — photo LEFT, quote RIGHT -->
+            <div ref="quoteRow3" class="reveal-up flex flex-col sm:flex-row items-center gap-8">
+                <div class="flex-shrink-0 w-64 overflow-hidden rounded-xl shadow-md border border-gray-200 bg-white">
+                    <img src="/home/Home3.png" alt="Home 3" class="w-full h-auto object-contain" />
+                </div>
+                <blockquote class="flex-1 italic text-gray-700 text-base sm:text-lg leading-relaxed">
+                    "Talking (Speaking) is one of the creative arts, for by it, you build up things that have, until talked about, no existence."
+                    <footer class="mt-3 not-italic text-sm font-semibold text-green-700">— Lord Chesterfield</footer>
+                </blockquote>
+            </div>
+
+            <!-- Row 4 — quote LEFT, photo RIGHT -->
+            <div ref="quoteRow4" class="reveal-up flex flex-col sm:flex-row-reverse items-center gap-8">
+                <div class="flex-shrink-0 w-64 overflow-hidden rounded-xl shadow-md border border-gray-200 bg-white">
+                    <img src="/home/Home4.png" alt="Home 4" class="w-full h-auto object-contain" />
+                </div>
+                <blockquote class="flex-1 italic text-gray-700 text-base sm:text-lg leading-relaxed">
+                    "Beneath the rule of men entirely great, the pen is mightier than the sword."
+                    <footer class="mt-3 not-italic text-sm font-semibold text-green-700">— Bulwer-Lytton</footer>
+                </blockquote>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ── Featured Lessons ──────────────────────────────────────────── -->
+    <section ref="lessonsSection" class="reveal-up bg-gray-50 py-16 px-4">
+        <div class="mx-auto max-w-4xl">
+            <p class="text-xs font-bold uppercase tracking-widest text-green-600 mb-1">Featured Lessons</p>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Start Learning Today</h2>
+            <p class="text-gray-500 mb-8">Pick a lesson and dive in — reading materials and video guides are available for every topic.</p>
+
+            <div class="overflow-hidden rounded-xl shadow-md">
+                <table class="w-full bg-white text-sm">
+                    <thead>
+                        <tr class="bg-green-700 text-white">
+                            <th class="px-5 py-3 text-left font-semibold">Aralin</th>
+                            <th class="px-5 py-3 text-left font-semibold">Format</th>
+                            <th class="px-5 py-3 text-left font-semibold">Antas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="(l, i) in lessons"
+                            :key="i"
+                            class="border-b border-gray-100 hover:bg-green-50 transition-colors"
+                        >
+                            <td class="px-5 py-3 text-gray-800">{{ l.title }}</td>
+                            <td class="px-5 py-3 text-gray-500">{{ l.format }}</td>
+                            <td class="px-5 py-3">
+                                <span :class="['inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold', badgeClass[l.color]]">
+                                    {{ l.level }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-5 flex flex-wrap gap-3">
+                <a
+                    href="/presentations"
+                    class="inline-flex items-center gap-2 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-green-800 transition-colors"
+                >
+                    Tingnan ang mga Aralin →
+                </a>
+                <a
+                    href="/videos"
+                    class="inline-flex items-center gap-2 rounded-lg border-2 border-green-700 px-5 py-2.5 text-sm font-bold text-green-700 hover:bg-green-700 hover:text-white transition-colors"
+                >
+                    Panoorin ang mga Aralin →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Testimonials ──────────────────────────────────────────────── -->
+    <section class="py-16 px-4">
+        <div class="mx-auto max-w-4xl">
+            <p class="text-xs font-bold uppercase tracking-widest text-green-600 mb-1">Student Testimonials</p>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-8">What Students Are Saying</h2>
+            <div ref="testimonialsEl" class="grid gap-5 sm:grid-cols-3">
+                <div
+                    v-for="q in quotes"
+                    :key="q.author"
+                    class="reveal-card reveal-up rounded-xl bg-white border-l-4 border-green-500 p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+                >
+                    <p class="text-sm italic text-gray-700 mb-4">{{ q.text }}</p>
+                    <div class="text-xs font-semibold text-gray-400">{{ q.author }}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CTA Banner ────────────────────────────────────────────────── -->
+    <section class="px-4 pb-16">
+        <div
+            ref="ctaBanner"
+            class="reveal-up mx-auto max-w-4xl rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-400 p-10 text-center shadow-xl"
+        >
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">Handa ka na bang magsimula?</h2>
+            <p class="text-white/90 mb-6">GRAMATECHA is completely free. Just open a lesson — read it, watch it, and learn at your own pace.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a
+                    href="/presentations"
+                    class="rounded-lg bg-gray-900 px-6 py-3 text-sm font-bold text-white hover:bg-black transition-colors"
+                >
+                    📚 Browse All Lessons
+                </a>
+                <a
+                    href="/videos"
+                    class="rounded-lg border-2 border-white/70 bg-transparent px-6 py-3 text-sm font-bold text-white hover:bg-white/15 transition-colors"
+                >
+                    🎬 Watch Free Videos
+                </a>
             </div>
         </div>
     </section>
 </template>
 
 <style scoped>
-@keyframes fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fade-in-up {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes pulse-slow {
-    0%, 100% {
-        opacity: 0.2;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.4;
-        transform: scale(1.05);
-    }
-}
-
-@keyframes ping-slow {
-    0% {
-        transform: scale(1);
-        opacity: 0;
-    }
-    50% {
-        opacity: 0.3;
-    }
-    100% {
-        transform: scale(1.5);
-        opacity: 0;
-    }
-}
-
-.animate-fade-in {
-    animation: fade-in 0.8s ease-out forwards;
+/* ── Shared reveal base ───────────────────────────────────────────────────── */
+/* Elements start invisible; the IntersectionObserver adds .is-visible         */
+.reveal-up {
     opacity: 0;
+    transform: translateY(36px);
+    transition:
+        opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.animate-fade-in-up {
-    animation: fade-in-up 0.8s ease-out forwards;
+.reveal-left {
     opacity: 0;
+    transform: translateX(-28px);
+    transition:
+        opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.animate-pulse-slow {
-    animation: pulse-slow 4s ease-in-out infinite;
+/* Stagger: each card gets --stagger from JS, adds 90 ms per item */
+.reveal-card.reveal-up,
+.reveal-card.reveal-left {
+    transition-delay: calc(var(--stagger, 0) * 90ms);
 }
 
-.animate-ping-slow {
-    animation: ping-slow 2s ease-in-out infinite;
-}
-
-.animation-delay-200 {
-    animation-delay: 0.2s;
-}
-
-.animation-delay-400 {
-    animation-delay: 0.4s;
-}
-
-.animation-delay-1000 {
-    animation-delay: 1s;
-}
-
-.feature-card {
-    animation-fill-mode: both;
+/* Visible state — added by useScrollReveal / useStaggerReveal */
+.is-visible {
+    opacity: 1 !important;
+    transform: none !important;
 }
 </style>

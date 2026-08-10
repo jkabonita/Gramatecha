@@ -1,26 +1,36 @@
 <script setup lang="ts">
-import type { PrimitiveProps } from "reka-ui"
-import type { HTMLAttributes } from "vue"
-import type { BadgeVariants } from "."
-import { reactiveOmit } from "@vueuse/core"
-import { Primitive } from "reka-ui"
-import { cn } from "@/lib/utils"
-import { badgeVariants } from "."
+import { computed } from 'vue';
+import { cn } from '@/lib/utils';
 
-const props = defineProps<PrimitiveProps & {
-  variant?: BadgeVariants["variant"]
-  class?: HTMLAttributes["class"]
-}>()
+interface Props {
+    variant?: 'default' | 'secondary' | 'destructive' | 'outline';
+    class?: string;
+}
 
-const delegatedProps = reactiveOmit(props, "class")
+const props = withDefaults(defineProps<Props>(), {
+    variant: 'default',
+});
+
+const variantClasses = computed(() => {
+    const variants = {
+        default: 'bg-primary text-primary-foreground hover:bg-primary/80',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/80',
+        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+    };
+    
+    return variants[props.variant];
+});
 </script>
 
 <template>
-  <Primitive
-    data-slot="badge"
-    :class="cn(badgeVariants({ variant }), props.class)"
-    v-bind="delegatedProps"
-  >
-    <slot />
-  </Primitive>
+    <div
+        :class="cn(
+            'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+            variantClasses,
+            props.class
+        )"
+    >
+        <slot />
+    </div>
 </template>
