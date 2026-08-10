@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { ArrowLeft, Save } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'vue-sonner';
 
+defineOptions({
+    layout: AppLayout,
+});
+
 interface Presentation {
     id: number;
     title: string;
     description: string | null;
+    category_id: number | null;
     filename: string;
     file_size: number;
     file_type: string;
@@ -17,15 +23,31 @@ interface Presentation {
     created_at: string;
 }
 
-interface Props {
-    presentation: Presentation;
+interface SubCategory {
+    id: number;
+    name: string;
+    color: string;
 }
 
-const { presentation } = defineProps<Props>();
+interface Category {
+    id: number;
+    name: string;
+    color: string;
+    selectable: boolean;
+    children: SubCategory[];
+}
+
+interface Props {
+    presentation: Presentation;
+    categories: Category[];
+}
+
+const { presentation, categories } = defineProps<Props>();
 
 const form = useForm({
     title: presentation.title,
     description: presentation.description || '',
+    category_id: presentation.category_id || null,
 });
 
 const submit = () => {
@@ -76,9 +98,9 @@ const formatFileSize = (bytes: number): string => {
             <div class="mx-auto max-w-3xl">
                 <div class="mb-4">
                     <Button as-child variant="ghost" size="sm">
-                        <Link :href="`/presentations/${presentation.id}`">
+                        <Link href="/admin/presentations">
                             <ArrowLeft class="mr-2 h-4 w-4" />
-                            Back to Presentation
+                            Back to Presentations
                         </Link>
                     </Button>
                 </div>
@@ -178,6 +200,40 @@ const formatFileSize = (bytes: number): string => {
                     </div>
                 </div>
 
+                <!-- Category Selection -->
+                <div>
+                    <Label for="category">Category (Optional)</Label>
+                    <select
+                        id="category"
+                        v-model="form.category_id"
+                        class="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        :disabled="form.processing"
+                    >
+                        <option :value="null">— No category —</option>
+                        <template v-for="cat in categories" :key="cat.id">
+                            <option v-if="cat.children.length === 0" :value="cat.id">
+                                📁 {{ cat.name }}
+                            </option>
+                            <template v-else>
+                                <option disabled>📁 {{ cat.name }}</option>
+                                <option
+                                    v-for="child in cat.children"
+                                    :key="child.id"
+                                    :value="child.id"
+                                >
+                                    &nbsp;&nbsp;&nbsp;&nbsp;└ {{ child.name }}
+                                </option>
+                            </template>
+                        </template>
+                    </select>
+                    <p
+                        v-if="form.errors.category_id"
+                        class="mt-2 text-sm text-destructive"
+                    >
+                        {{ form.errors.category_id }}
+                    </p>
+                </div>
+
                 <!-- Form Actions -->
                 <div class="flex gap-3">
                     <Button type="submit" :disabled="form.processing">
@@ -189,7 +245,7 @@ const formatFileSize = (bytes: number): string => {
                         variant="outline"
                         :disabled="form.processing"
                     >
-                        <Link :href="`/presentations/${presentation.id}`">
+                        <Link href="/admin/presentations">
                             Cancel
                         </Link>
                     </Button>
