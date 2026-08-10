@@ -75,25 +75,20 @@ export function initializeTheme(): void {
         return;
     }
 
-    // Initialize theme from saved preference or default to system...
-    const savedAppearance = getStoredAppearance();
-    updateTheme(savedAppearance || 'system');
-
-    // Set up system theme change listener...
-    mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+    // Force light mode - disable dark mode globally
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('appearance', 'light');
+    setCookie('appearance', 'light');
 }
 
-const appearance = ref<Appearance>('system');
+const appearance = ref<Appearance>('light');
 
 export function useAppearance(): UseAppearanceReturn {
     onMounted(() => {
-        const savedAppearance = localStorage.getItem(
-            'appearance',
-        ) as Appearance | null;
-
-        if (savedAppearance) {
-            appearance.value = savedAppearance;
-        }
+        // Force light mode
+        appearance.value = 'light';
+        localStorage.setItem('appearance', 'light');
+        document.documentElement.classList.remove('dark');
     });
 
     const resolvedAppearance = computed<ResolvedAppearance>(() => {

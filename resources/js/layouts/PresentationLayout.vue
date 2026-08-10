@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 </script>
 
 <template>
-    <div class="min-h-screen bg-background">
+    <div class="min-h-screen bg-white">
         <TopNav />
         <main>
             <slot />
